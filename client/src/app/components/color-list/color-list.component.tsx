@@ -14,12 +14,16 @@ import {
 
 import { Color } from '../../models/Color';
 import { State } from '../../state/app.reducer';
-import { editColor, deleteColor } from '../../state/app.actions';
+import { addColor, deleteColor, editColor } from '../../state/app.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 350,
     margin: 10,
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   color: {
     display: 'flex',
@@ -47,22 +51,24 @@ const ColorList: React.FunctionComponent = () => {
   const classes = useStyles({});
   const dispatch = useDispatch();
   const colorList = useSelector<State, Color[]>((state) => state.colors.list);
-  const [editing, setEditing] = React.useState(false);
-  const [stagingColor, setStagingColor] = React.useState<Color>({
-    color: '',
-    code: { hex: '' },
-    id: -1,
-  });
+  const [mode, setMode] = React.useState<string>('viewing');
+  const [stagingColor, setStagingColor] = React.useState<Color>(new Color());
 
   const editStagingColor = (color: Color) => {
-    setEditing(true);
     setStagingColor(color);
+    setMode('editing');
   };
 
-  const saveEdit = (e: React.FormEvent<HTMLFormElement>) => {
+  const addStagingColor = () => {
+    setStagingColor(new Color());
+    setMode('adding');
+  };
+
+  const save = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setEditing(false);
-    editColor(stagingColor)(dispatch);
+    if (mode === 'editing') editColor(stagingColor)(dispatch);
+    if (mode === 'adding') addColor(stagingColor)(dispatch);
+    setMode('viewing');
   };
 
   const eraseColor = (color: Color) => {
@@ -73,7 +79,12 @@ const ColorList: React.FunctionComponent = () => {
     <Card className={classes.root}>
       <CardContent>
         <Typography variant='h5' gutterBottom>
-          Colors
+          <div className={classes.header}>
+            Colors
+            <IconButton onClick={() => addStagingColor()}>
+              <Icon>add_circle</Icon>
+            </IconButton>
+          </div>
         </Typography>
 
         {colorList.map((color) => (
@@ -91,8 +102,8 @@ const ColorList: React.FunctionComponent = () => {
           </div>
         ))}
 
-        {editing && (
-          <form onSubmit={saveEdit}>
+        {(mode === 'editing' || mode === 'adding') && (
+          <form onSubmit={save}>
             <Typography variant='overline' display='block'>
               Edit Color
             </Typography>
@@ -118,13 +129,12 @@ const ColorList: React.FunctionComponent = () => {
               <Button variant='contained' color='primary' type='submit'>
                 Save
               </Button>
-              <Button variant='contained' color='primary' onClick={() => setEditing(false)}>
+              <Button variant='contained' color='primary' onClick={() => setMode('viewing')}>
                 Cancel
               </Button>
             </div>
           </form>
         )}
-        {/* stretch - build another form here to add a color */}
       </CardContent>
     </Card>
   );

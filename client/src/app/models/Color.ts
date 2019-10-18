@@ -1,7 +1,12 @@
-export interface Color {
-  color: string;
-  code: {
+export class Color {
+  public color: string;
+  public code: {
     hex: string;
   };
-  id: number;
+  public id?: number;
+
+  constructor() {
+    this.color = '';
+    this.code = { hex: '' };
+  }
 }

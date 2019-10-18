@@ -22,15 +22,11 @@ export const colorsReducer = (state = initialState, action: ColorsActions) => {
     case 'GET_COLORS_FAILURE':
       return { ...state, list: [], loading: false, error: action.payload };
 
-    case 'EDIT_COLOR_START':
+    case 'ADD_COLOR_START':
       return { ...state, loading: true, error: '' };
-    case 'EDIT_COLOR_SUCCESS':
-      const editedColor = action.payload;
-      const editedColorList = state.list.map((color) =>
-        color.id === editedColor.id ? editedColor : color
-      );
-      return { ...state, list: editedColorList, loading: false, error: '' };
-    case 'EDIT_COLOR_FAILURE':
+    case 'ADD_COLOR_SUCCESS':
+      return { ...state, list: action.payload, loading: false, error: '' };
+    case 'ADD_COLOR_FAILURE':
       return { ...state, loading: false, error: action.payload };
 
     case 'DELETE_COLOR_START':
@@ -40,6 +36,17 @@ export const colorsReducer = (state = initialState, action: ColorsActions) => {
       const otherColors = state.list.filter((color) => color.id !== deletedColor.id);
       return { ...state, list: otherColors, loading: false, error: '' };
     case 'DELETE_COLOR_FAILURE':
+      return { ...state, loading: false, error: action.payload };
+
+    case 'EDIT_COLOR_START':
+      return { ...state, loading: true, error: '' };
+    case 'EDIT_COLOR_SUCCESS':
+      const editedColor = action.payload;
+      const editedColorList = state.list.map((color) =>
+        color.id === editedColor.id ? editedColor : color
+      );
+      return { ...state, list: editedColorList, loading: false, error: '' };
+    case 'EDIT_COLOR_FAILURE':
       return { ...state, loading: false, error: action.payload };
 
     case 'CLEAR_ERROR':
