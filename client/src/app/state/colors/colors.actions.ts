@@ -37,7 +37,7 @@ export const editColor = (color: Color) => async (dispatch: (action: EditColor) 
   dispatch({ type: 'EDIT_COLOR_START' });
 
   try {
-    const res = await axiosWithAuth().put(`/api/colors/${color.id}`, color);
+    await axiosWithAuth().put(`/api/colors/${color.id}`, color);
     dispatch({ type: 'EDIT_COLOR_SUCCESS', payload: color });
   } catch (err) {
     dispatch({ type: 'EDIT_COLOR_FAILURE', payload: err.toString() });
@@ -48,7 +48,7 @@ export const deleteColor = (color: Color) => async (dispatch: (action: DeleteCol
   dispatch({ type: 'DELETE_COLOR_START' });
 
   try {
-    const res = await axiosWithAuth().delete(`/api/colors/${color.id}`);
+    await axiosWithAuth().delete(`/api/colors/${color.id}`);
     dispatch({ type: 'DELETE_COLOR_SUCCESS', payload: color });
   } catch (err) {
     dispatch({ type: 'DELETE_COLOR_FAILURE', payload: err.toString() });

@@ -1,15 +1,31 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { Color } from '../models/Color';
-import { State } from '../state/app.reducer';
-import { getColors } from '../state/app.actions';
+import { getColors, signOut } from '../state/app.actions';
 import { Bubbles } from '../components/bubbles/bubbles.component';
 import { ColorList } from '../components/color-list/color-list.component';
+import { AppBar, Toolbar, Button, Typography, makeStyles } from '@material-ui/core';
 
-const BubblePage = () => {
+const useStyles = makeStyles((theme) => ({
+  spacer: {
+    flex: '1',
+  },
+  colorList: {
+    position: 'absolute',
+  },
+  bubbles: {
+    margin: 10,
+    width: '100%',
+    position: 'fixed',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}));
+
+const BubblePage: React.FunctionComponent = () => {
+  const classes = useStyles({});
   const dispatch = useDispatch();
-  const colorList = useSelector<State, Color[]>((state) => state.colors.list);
 
   React.useEffect(() => {
     getColors()(dispatch);
@@ -17,8 +33,21 @@ const BubblePage = () => {
 
   return (
     <>
-      <ColorList colors={colorList} />
-      <Bubbles colors={colorList} />
+      <AppBar position='relative'>
+        <Toolbar>
+          <Typography>Bubbles</Typography>
+          <div className={classes.spacer}></div>
+          <Button onClick={() => signOut()(dispatch)} color='inherit'>
+            Sign Out
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <div className={classes.bubbles}>
+        <Bubbles />
+      </div>
+      <div className={classes.colorList}>
+        <ColorList />
+      </div>
     </>
   );
 };

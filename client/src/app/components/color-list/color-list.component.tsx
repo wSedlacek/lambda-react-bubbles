@@ -1,15 +1,52 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import {
+  Button,
+  Card,
+  CardContent,
+  Icon,
+  IconButton,
+  Typography,
+  makeStyles,
+  TextField,
+} from '@material-ui/core';
 
 import { Color } from '../../models/Color';
+import { State } from '../../state/app.reducer';
 import { editColor, deleteColor } from '../../state/app.actions';
 
-interface ColorListProps {
-  colors: Color[];
-}
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: 350,
+    margin: 10,
+  },
+  color: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  colorBox: {
+    display: 'inline-block',
+    height: 16,
+    width: 16,
+    marginRight: 10,
+    border: '1px lightgray solid',
+    borderRadius: '50%',
+  },
+  input: {
+    marginBottom: 10,
+  },
+  buttonRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+}));
 
-const ColorList = ({ colors }: ColorListProps) => {
+const ColorList: React.FunctionComponent = () => {
+  const classes = useStyles({});
   const dispatch = useDispatch();
+  const colorList = useSelector<State, Color[]>((state) => state.colors.list);
   const [editing, setEditing] = React.useState(false);
   const [stagingColor, setStagingColor] = React.useState<Color>({
     color: '',
@@ -33,34 +70,41 @@ const ColorList = ({ colors }: ColorListProps) => {
   };
 
   return (
-    <div className='colors-wrap'>
-      <p>colors</p>
-      <ul>
-        {colors.map((color) => (
-          <li key={color.color} onClick={() => editStagingColor(color)}>
-            <span>
-              <span className='delete' onClick={() => eraseColor(color)}>
-                x
-              </span>{' '}
-              {color.color}
-            </span>
-            <div className='color-box' style={{ backgroundColor: color.code.hex }} />
-          </li>
+    <Card className={classes.root}>
+      <CardContent>
+        <Typography variant='h5' gutterBottom>
+          Colors
+        </Typography>
+
+        {colorList.map((color) => (
+          <div className={classes.color} key={color.color}>
+            <div onClick={() => editStagingColor(color)}>
+              <div className={classes.colorBox} style={{ backgroundColor: color.code.hex }} />
+              <Typography variant='body1' display='inline'>
+                {color.color}
+              </Typography>
+            </div>
+
+            <IconButton className='delete' onClick={() => eraseColor(color)}>
+              <Icon>close</Icon>
+            </IconButton>
+          </div>
         ))}
-      </ul>
-      {editing && (
-        <form onSubmit={saveEdit}>
-          <legend>edit color</legend>
-          <label>
-            color name:
-            <input
+
+        {editing && (
+          <form onSubmit={saveEdit}>
+            <Typography variant='overline' display='block'>
+              Edit Color
+            </Typography>
+            <TextField
+              className={classes.input}
+              label='Color Name'
               onChange={(e) => setStagingColor({ ...stagingColor, color: e.target.value })}
               value={stagingColor.color}
             />
-          </label>
-          <label>
-            hex code:
-            <input
+            <TextField
+              className={classes.input}
+              label='Hex Code'
               onChange={(e) =>
                 setStagingColor({
                   ...stagingColor,
@@ -69,16 +113,20 @@ const ColorList = ({ colors }: ColorListProps) => {
               }
               value={stagingColor.code.hex}
             />
-          </label>
-          <div className='button-row'>
-            <button type='submit'>save</button>
-            <button onClick={() => setEditing(false)}>cancel</button>
-          </div>
-        </form>
-      )}
-      <div className='spacer' />
-      {/* stretch - build another form here to add a color */}
-    </div>
+
+            <div className={classes.buttonRow}>
+              <Button variant='contained' color='primary' type='submit'>
+                Save
+              </Button>
+              <Button variant='contained' color='primary' onClick={() => setEditing(false)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+        {/* stretch - build another form here to add a color */}
+      </CardContent>
+    </Card>
   );
 };
 
