@@ -1,10 +1,12 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { AppBar, Toolbar, Button, Typography, makeStyles } from '@material-ui/core';
+
 import { getColors, signOut } from '../state/app.actions';
 import { Bubbles } from '../components/bubbles/bubbles.component';
 import { ColorList } from '../components/color-list/color-list.component';
-import { AppBar, Toolbar, Button, Typography, makeStyles } from '@material-ui/core';
+import { Error } from '../components/reusable/error/error.component';
 
 const useStyles = makeStyles((theme) => ({
   spacer: {
@@ -48,6 +50,7 @@ const BubblePage: React.FunctionComponent = () => {
       <div className={classes.colorList}>
         <ColorList />
       </div>
+      <Error />
     </>
   );
 };

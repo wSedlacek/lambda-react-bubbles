@@ -8,6 +8,7 @@ import { User } from '../models/User';
 import { State } from '../state/app.reducer';
 import { login, checkToken } from '../state/app.actions';
 import { LoginForm } from '../components/login/form/form.component';
+import { Error } from '../components/reusable/error/error.component';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +42,7 @@ const LoginPage = () => {
       {(loading && <CircularProgress color='secondary' />) || (
         <LoginForm onSubmit={(user: User) => login(user)(dispatch)} />
       )}
+      <Error />
     </div>
   );
 };
